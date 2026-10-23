@@ -2,6 +2,7 @@ import type {Options as DocsOptions} from '@docusaurus/plugin-content-docs'
 import type {Config, LoadContext, PluginConfig} from '@docusaurus/types'
 import {createRequire} from 'node:module'
 import {themes as prismThemes} from 'prism-react-renderer'
+import {directiveAdmonitionTitles} from './markdown.ts'
 import hubPlugin from './plugin.ts'
 import {sidebarOf} from './sidebar.ts'
 import {builtSpaces, isLocalSource, pathOf, refOf, spaceDirOf, validate} from './spaces.ts'
@@ -26,7 +27,11 @@ export function createHubConfig(site: Site, spaces: Space[]): Config {
     onBrokenLinks: 'throw',
     onBrokenAnchors: 'throw',
     future: {v4: true, faster: true},
-    markdown: {format: 'detect', hooks: {onBrokenMarkdownLinks: 'throw'}},
+    markdown: {
+      format: 'detect',
+      preprocessor: directiveAdmonitionTitles,
+      hooks: {onBrokenMarkdownLinks: 'throw'},
+    },
     i18n: {defaultLocale: 'en', locales: ['en']},
     presets: [[require.resolve('@docusaurus/preset-classic'), {docs: false, blog: false, pages: false}]],
     themes: built.length === 0 ? [] : [searchTheme(built)],
