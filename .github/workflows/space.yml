@@ -15,6 +15,10 @@ on:
         description: Branch of the hub to build with.
         type: string
         default: main
+      app-id:
+        description: App ID or Client ID of the GitHub App that may start a rebuild of the hub. Pass it explicitly, the variables of another owner are not available here.
+        type: string
+        default: ''
       rebuild:
         description: Ask the hub to rebuild after a push to the default branch. Needs the App credentials.
         type: boolean
@@ -70,7 +74,7 @@ jobs:
         id: token
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.DOCS_APP_ID }}
+          client-id: ${{ inputs.app-id || vars.DOCS_APP_ID }}
           private-key: ${{ secrets.DOCS_APP_PRIVATE_KEY }}
           owner: ${{ steps.hub.outputs.owner }}
           repositories: ${{ steps.hub.outputs.name }}

@@ -129,24 +129,28 @@ name: Docs
 
 on:
   push:
-    paths: ['docs/**']
+    paths: ['docs/**', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['docs/**']
+    paths: ['docs/**', '.github/workflows/docs.yml']
 
 jobs:
   docs:
     uses: rainbowdashlabs/docs-hub/.github/workflows/space.yml@v1
     with:
       hub-repository: owner/docs
-    secrets: inherit
+      app-id: ${{ vars.DOCS_APP_ID }}
+    secrets:
+      DOCS_APP_PRIVATE_KEY: ${{ secrets.DOCS_APP_PRIVATE_KEY }}
 ```
 
 On a pull request it builds the hub with the pull request's `docs/` in place of the published one, so the
 repository must already be a source in the hub's `spaces.ts`. On a push to the default branch it asks the hub to
 rebuild through a GitHub App: the variable `DOCS_APP_ID` and the secret `DOCS_APP_PRIVATE_KEY` must be available
-to the repository, and the App needs "Contents: write" on the hub repository. A hub that rebuilds on a schedule
+to the repository, and the App needs "Contents: write" on the hub repository. Pass both explicitly as above:
+`secrets: inherit` and the caller's variables only reach reusable workflows of the same owner, and this one lives in
+`rainbowdashlabs`. A hub that rebuilds on a schedule
 instead passes `rebuild: false` and needs no App. Inputs: `hub-repository` (required), `hub-ref` (default `main`),
-`docs-path` (default `docs`), `rebuild` (default `true`).
+`docs-path` (default `docs`), `rebuild` (default `true`), `app-id`.
 
 ## Develop the package
 
