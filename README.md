@@ -131,7 +131,6 @@ on:
   push:
     paths: ['docs/**', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['docs/**', '.github/workflows/docs.yml']
 
 jobs:
   docs:
@@ -143,13 +142,16 @@ jobs:
       DOCS_APP_PRIVATE_KEY: ${{ secrets.DOCS_APP_PRIVATE_KEY }}
 ```
 
-On a pull request it builds the hub with the pull request's `docs/` in place of the published one, so the
-repository must already be a source in the hub's `spaces.ts`. On a push to the default branch it asks the hub to
-rebuild through a GitHub App: the variable `DOCS_APP_ID` and the secret `DOCS_APP_PRIVATE_KEY` must be available
-to the repository, and the App needs "Contents: write" on the hub repository. Pass both explicitly as above:
-`secrets: inherit` and the caller's variables only reach reusable workflows of the same owner, and this one lives in
-`rainbowdashlabs`. A hub that rebuilds on a schedule
-instead passes `rebuild: false` and needs no App. Inputs: `hub-repository` (required), `hub-ref` (default `main`),
+On every pull request it reports a `docs / verify` check, so branch protection can require it. When the pull request
+changes the docs folder or `docs.yml`, it builds the hub with those docs in place of the published ones; otherwise it
+passes without building. The repository must already be a source in the hub's `spaces.ts`. Keep the `paths` filter
+on `push` only.
+
+On a push to the default branch it asks the hub to rebuild through a GitHub App: the variable `DOCS_APP_ID` and the
+secret `DOCS_APP_PRIVATE_KEY` must be available to the repository, and the App needs "Contents: write" on the hub
+repository. Pass both explicitly as above: `secrets: inherit` and the caller's variables only reach reusable
+workflows of the same owner, and this one lives in `rainbowdashlabs`. A hub that rebuilds on a schedule instead
+passes `rebuild: false` and needs no App. Inputs: `hub-repository` (required), `hub-ref` (default `main`),
 `docs-path` (default `docs`), `rebuild` (default `true`), `app-id`.
 
 ## Develop the package

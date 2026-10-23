@@ -33,26 +33,45 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
+      - name: Look for docs changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DOCS: ${{ inputs.docs-path }}
+          PULL: ${{ github.event.pull_request.number }}
+        run: |
+          files=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PULL}/files" --jq '.[].filename')
+          if printf '%s\n' "$files" | grep -qE "^(${DOCS%/}/|\.github/workflows/docs\.yml$)"; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No docs changes, nothing to build."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Check out the hub
+        if: steps.changes.outputs.changed == 'true'
         uses: actions/checkout@v7
         with:
           repository: ${{ inputs.hub-repository }}
           ref: ${{ inputs.hub-ref }}
           path: hub
       - name: Check out the docs
+        if: steps.changes.outputs.changed == 'true'
         uses: actions/checkout@v7
         with:
           path: source
       - name: Set up Node
+        if: steps.changes.outputs.changed == 'true'
         uses: actions/setup-node@v7
         with:
           node-version-file: hub/.nvmrc
           cache: npm
           cache-dependency-path: hub/package-lock.json
       - name: Install
+        if: steps.changes.outputs.changed == 'true'
         working-directory: hub
         run: npm ci
       - name: Build the hub with these docs
+        if: steps.changes.outputs.changed == 'true'
         working-directory: hub
         run: |
           name=$(printf %s "${GITHUB_REPOSITORY#*/}" | tr '[:lower:]' '[:upper:]' | tr -c 'A-Z0-9' '_')
