@@ -43,11 +43,11 @@ function rule(selector: string, variables: Record<string, string>): string {
   return `${selector}{${Object.entries(variables).map(([name, value]) => `${name}:${value};`).join('')}}`
 }
 
-function lightOf(colour: Colour): string {
+export function lightOf(colour: Colour): string {
   return typeof colour === 'string' ? colour : colour.light
 }
 
-function darkOf(colour: Colour): string {
+export function darkOf(colour: Colour): string {
   return typeof colour === 'string' ? colour : colour.dark
 }
 
@@ -55,7 +55,7 @@ function darkOf(colour: Colour): string {
  * Darkens (negative amount) or lightens (positive amount) a colour by a share of its own lightness,
  * the way Docusaurus derives its primary colour shades.
  */
-function shade(hex: string, amount: number): string {
+export function shade(hex: string, amount: number): string {
   const [h, s, l] = toHsl(hex)
   return fromHsl(h, s, Math.min(1, Math.max(0, l + l * amount)))
 }

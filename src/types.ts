@@ -32,6 +32,8 @@ export interface Group {
  *
  * `redirects` maps old paths, for example those of a previous site, to a route of this hub or to an
  * absolute URL. The build fails when a route target does not exist.
+ *
+ * `mavenRepositories` are searched in order for the Javadoc of the spaces; Maven Central when unset.
  */
 export interface Site {
   title: string
@@ -46,6 +48,7 @@ export interface Site {
   footer?: FooterColumn[]
   copyright?: string
   redirects?: Record<string, string>
+  mavenRepositories?: string[]
 }
 
 /**
@@ -74,9 +77,21 @@ export interface LocalSource {
 export type Source = RepositorySource | LocalSource
 
 /**
+ * A published API whose released `-javadoc.jar` the hub serves inside a space. `artifact` is
+ * `group:name`; `version` defaults to the newest version without a pre-release qualifier such as
+ * `-alpha1`, `-RC2` or `-DEV`.
+ */
+export interface JavadocArtifact {
+  artifact: string
+  label?: string
+  version?: string
+}
+
+/**
  * One project's documentation: its own route, sidebar, search context and accent colour.
  *
  * A space either has `sources`, which the hub builds, or an `href` to documentation hosted elsewhere.
+ * A built space can also serve the Javadoc of its APIs under `/<id>/javadoc/`.
  */
 export interface Space {
   id: string
@@ -86,4 +101,5 @@ export interface Space {
   accent?: Colour
   sources?: Source[]
   href?: string
+  javadoc?: JavadocArtifact[]
 }

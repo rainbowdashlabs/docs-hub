@@ -90,3 +90,20 @@
   font-weight: var(--ifm-font-weight-bold);
   color: var(--ifm-color-primary);
 }
+
+.hub-space-header__javadoc {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-button-border-radius);
+  font-size: 0.8rem;
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-primary);
+}
+
+.hub-space-header__javadoc:hover {
+  background: var(--ifm-color-primary);
+  color: var(--ifm-background-color);
+  text-decoration: none;
+}

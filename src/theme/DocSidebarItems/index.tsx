@@ -7,8 +7,8 @@ import type {ComponentProps, ReactNode} from 'react'
 import type {HubData} from '../../plugin.ts'
 
 /**
- * The name of the space at the top of its sidebar, with a way back to all spaces, so it is always
- * clear which project's docs are open.
+ * The name of the space at the top of its sidebar, with a way back to all spaces and links to the
+ * space's Javadoc, so it is always clear which project's docs are open.
  */
 function SpaceHeader(): ReactNode {
   const pluginId = useActivePlugin()?.pluginId
@@ -19,6 +19,9 @@ function SpaceHeader(): ReactNode {
     <li className="hub-space-header">
       <Link className="hub-space-header__all" to="/">All docs</Link>
       <Link className="hub-space-header__title" to={space.to}>{space.title}</Link>
+      {space.javadoc.map(javadoc => (
+        <a key={javadoc.href} className="hub-space-header__javadoc" href={javadoc.href}>{javadoc.label}</a>
+      ))}
     </li>
   )
 }

@@ -25,5 +25,6 @@ export default [
     description: 'A space in a second group, using the site colour.',
     group: 'tools',
     sources: [{dir: 'fixture/tool'}],
+    javadoc: [{artifact: 'org.slf4j:slf4j-api', label: 'SLF4J API'}],
   },
 ] satisfies Space[]

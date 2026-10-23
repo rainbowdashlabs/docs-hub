@@ -1,4 +1,4 @@
-import type {LocalSource, RepositorySource, Site, Source, Space} from './types.ts'
+import type {JavadocArtifact, LocalSource, RepositorySource, Site, Source, Space} from './types.ts'
 
 export const SPACES_DIR = '.spaces'
 export const CACHE_DIR = '.cache/repos'
@@ -53,6 +53,10 @@ export function validate(site: Site, spaces: Space[]): void {
     ids.add(space.id)
     if (!groups.has(space.group)) problems.push(`${name}: group "${space.group}" is not in site.groups.`)
     if ((space.sources === undefined) === (space.href === undefined)) problems.push(`${name}: needs either sources or href.`)
+    if (space.javadoc !== undefined && space.sources === undefined) problems.push(`${name}: javadoc needs a built space with sources.`)
+    for (const artifact of space.javadoc ?? []) {
+      if (!/^[^:\s]+:[^:\s]+$/.test(artifact.artifact)) problems.push(`${name}: javadoc artifact "${artifact.artifact}" must be group:name.`)
+    }
     if (space.sources === undefined) continue
     if (space.sources.length === 0) problems.push(`${name}: sources is empty.`)
     const roots = space.sources.filter(source => source.mount === undefined)
@@ -64,4 +68,19 @@ export function validate(site: Site, spaces: Space[]): void {
     }
   }
   if (problems.length > 0) throw new Error(`The hub configuration is invalid:\n  ${problems.join('\n  ')}`)
+}
+
+export const JAVADOC_DIR = '.javadoc'
+
+/**
+ * The route of one Javadoc inside its space: `/<id>/javadoc/` for a single API, and one folder per
+ * artifact name below it when a space has several.
+ */
+export function javadocRouteOf(space: Space, artifact: JavadocArtifact): string {
+  const several = (space.javadoc?.length ?? 0) > 1
+  return several ? `/${space.id}/javadoc/${artifactName(artifact)}/` : `/${space.id}/javadoc/`
+}
+
+export function artifactName(artifact: JavadocArtifact): string {
+  return artifact.artifact.split(':')[1] ?? artifact.artifact
 }

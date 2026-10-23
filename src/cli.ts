@@ -2,14 +2,15 @@
 import {spawn} from 'node:child_process'
 import {createRequire} from 'node:module'
 import {join, resolve} from 'node:path'
-import createJiti from 'jiti'
+import {createJiti} from 'jiti'
 import {validate} from './spaces.ts'
+import {syncJavadoc} from './javadoc.ts'
 import {sync, watchLive} from './sync.ts'
 import type {Site, Space} from './types.ts'
 
 const USAGE = `Usage: docs-hub <sync|start|build> [site dir] [docusaurus options]
 
-  sync    gather every space's sources into .spaces/
+  sync    gather every space's sources into .spaces/ and its Javadoc into .javadoc/
   start   sync, then run the dev server and keep local sources in sync
   build   sync, then build the static site
 
@@ -19,10 +20,10 @@ Set HUB_SOURCE_<REPO>=<folder> to use a local docs folder instead of fetching th
  * Reads the hub's `site.ts` and `spaces.ts` from the site directory, with the same TypeScript loader
  * Docusaurus uses for its config, so they load the same way in both places.
  */
-function loadHub(siteDir: string): {site: Site, spaces: Space[]} {
-  const load = createJiti(join(siteDir, 'docusaurus.config.ts'), {interopDefault: true})
-  const site = load(join(siteDir, 'site.ts')) as Site
-  const spaces = load(join(siteDir, 'spaces.ts')) as Space[]
+async function loadHub(siteDir: string): Promise<{site: Site, spaces: Space[]}> {
+  const jiti = createJiti(join(siteDir, 'docusaurus.config.ts'))
+  const site = await jiti.import<Site>(join(siteDir, 'site.ts'), {default: true})
+  const spaces = await jiti.import<Space[]>(join(siteDir, 'spaces.ts'), {default: true})
   validate(site, spaces)
   return {site, spaces}
 }
@@ -43,8 +44,9 @@ async function main(argv: string[]): Promise<number> {
     console.error(USAGE)
     return 2
   }
-  const {spaces} = loadHub(siteDir)
+  const {site, spaces} = await loadHub(siteDir)
   const placements = sync(siteDir, spaces)
+  await syncJavadoc(siteDir, site, spaces)
   if (command === 'sync') return 0
   if (command === 'start') watchLive(placements)
   return docusaurus(siteDir, [command!, siteDir, ...rest])
