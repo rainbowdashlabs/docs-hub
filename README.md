@@ -77,8 +77,8 @@ export default [
 - **Spaces.** Each space is built from one or more `docs/` folders (`ref` defaults to `main`, `path` to `docs`).
   Extra sources get a `mount` folder and `label` and appear as sidebar categories after the main pages.
   A space with `href` instead of `sources` links to docs hosted elsewhere.
-- **Javadoc.** `javadoc` lists published artifacts. The newest release without a pre-release qualifier is
-  downloaded from `mavenRepositories` and served at `/<space>/javadoc/` (one folder per artifact when there are
+- **Javadoc.** `javadoc` lists published artifacts. The newest release without a pre-release qualifier across all
+  `mavenRepositories` is downloaded and served at `/<space>/javadoc/` (one folder per artifact when there are
   several), restyled with the hub's look and the space's accent. Docs pages link it with
   `pathname:///<space>/javadoc/`.
 - **Link previews.** Every page gets a generated card (`og/<page>.png`) and the space's colour as `theme-color`,

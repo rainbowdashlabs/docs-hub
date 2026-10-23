@@ -38,21 +38,50 @@ export async function syncJavadoc(siteDir: string, site: Site, spaces: Space[]):
   }
 }
 
+/**
+ * Finds the repository and version to take an artifact's Javadoc from. A pinned version comes from the
+ * first repository that has it. Otherwise every repository is asked and the newest release among all of
+ * them wins, so a stale line in an earlier repository (an old major on Maven Central next to newer
+ * releases on a company repository) never hides the current one.
+ */
 async function locate(artifact: JavadocArtifact, repositories: string[]): Promise<{repository: string, version: string}> {
-  for (const repository of repositories) {
-    if (artifact.version !== undefined) {
+  if (artifact.version !== undefined) {
+    for (const repository of repositories) {
       if ((await fetch(jarUrl(repository, artifact, artifact.version), {method: 'HEAD'})).ok) {
         return {repository, version: artifact.version}
       }
-      continue
     }
-    const response = await fetch(`${repository}/${artifactPath(artifact)}/maven-metadata.xml`)
-    if (!response.ok) continue
-    const versions = [...(await response.text()).matchAll(/<version>([^<]+)<\/version>/g)].map(match => match[1]!)
-    const release = versions.filter(version => !PRE_RELEASE.test(version)).at(-1)
-    if (release !== undefined) return {repository, version: release}
+  } else {
+    let newest: {repository: string, version: string} | undefined
+    for (const repository of repositories) {
+      const release = await latestRelease(repository, artifact)
+      if (release !== undefined && (newest === undefined || compareVersions(release, newest.version) > 0)) {
+        newest = {repository, version: release}
+      }
+    }
+    if (newest !== undefined) return newest
   }
   throw new Error(`No released Javadoc of ${artifact.artifact}${artifact.version ? `:${artifact.version}` : ''} in ${repositories.join(', ')}.`)
+}
+
+async function latestRelease(repository: string, artifact: JavadocArtifact): Promise<string | undefined> {
+  const response = await fetch(`${repository}/${artifactPath(artifact)}/maven-metadata.xml`)
+  if (!response.ok) return undefined
+  const versions = [...(await response.text()).matchAll(/<version>([^<]+)<\/version>/g)].map(match => match[1]!)
+  return versions.filter(version => !PRE_RELEASE.test(version)).sort(compareVersions).at(-1)
+}
+
+/** Orders release versions by their numeric parts, so `3.10.0` comes after `3.9.2`; other parts compare as text. */
+export function compareVersions(a: string, b: string): number {
+  const left = a.split(/[.-]/)
+  const right = b.split(/[.-]/)
+  for (let i = 0; i < Math.max(left.length, right.length); i++) {
+    const x = left[i] ?? '0'
+    const y = right[i] ?? '0'
+    const difference = /^\d+$/.test(x) && /^\d+$/.test(y) ? Number(x) - Number(y) : x.localeCompare(y)
+    if (difference !== 0) return difference
+  }
+  return 0
 }
 
 async function download(siteDir: string, repository: string, artifact: JavadocArtifact, version: string): Promise<Uint8Array> {

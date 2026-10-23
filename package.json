@@ -1,6 +1,6 @@
 {
   "name": "docs-hub",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Docusaurus hub that gathers the docs folders of many repositories into one site with a separate space per project.",
   "license": "LGPL-3.0-or-later",
   "repository": "github:rainbowdashlabs/docs-hub",

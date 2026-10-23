@@ -33,7 +33,8 @@ export interface Group {
  * `redirects` maps old paths, for example those of a previous site, to a route of this hub or to an
  * absolute URL. The build fails when a route target does not exist.
  *
- * `mavenRepositories` are searched in order for the Javadoc of the spaces; Maven Central when unset.
+ * `mavenRepositories` hold the Javadoc of the spaces; Maven Central when unset. The newest release across all of
+ * them is served; a pinned `version` comes from the first repository that has it.
  *
  * `stripe` is a list of colours shown as equal bands: a thin line under the navbar and the edge of the
  * preview cards. `customCss` lists extra stylesheets of the hub, relative to the site directory.
