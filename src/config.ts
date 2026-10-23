@@ -36,7 +36,12 @@ export function createHubConfig(site: Site, spaces: Space[]): Config {
       hooks: {onBrokenMarkdownLinks: 'throw'},
     },
     i18n: {defaultLocale: 'en', locales: ['en']},
-    presets: [[require.resolve('@docusaurus/preset-classic'), {docs: false, blog: false, pages: false}]],
+    presets: [[require.resolve('@docusaurus/preset-classic'), {
+      docs: false,
+      blog: false,
+      pages: false,
+      theme: {customCss: site.customCss ?? []},
+    }]],
     themes: built.length === 0 ? [] : [searchTheme(built)],
     plugins: [
       (context: LoadContext) => hubPlugin(context, site, spaces),

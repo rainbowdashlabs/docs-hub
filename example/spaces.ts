@@ -1,4 +1,4 @@
-import type {Space} from 'docs-hub'
+import type {Space} from '../src/types.ts'
 
 export default [
   {

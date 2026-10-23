@@ -28,7 +28,24 @@ export function colourCss(site: Site, spaces: Space[]): string {
     rules.push(rule(`html.plugin-id-${space.id}`, primaryVariables(lightOf(space.accent))))
     rules.push(rule(`html.plugin-id-${space.id}[data-theme='dark']`, primaryVariables(darkOf(space.accent))))
   }
+  if (site.stripe !== undefined) rules.push(stripeCss(site.stripe))
   return rules.join('\n')
+}
+
+/**
+ * A thin band of the stripe colours along the bottom of the navbar.
+ */
+function stripeCss(colours: string[]): string {
+  return `.navbar{border-bottom:none;box-shadow:none}.navbar::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;background:${bands(colours, 'to right')}}`
+}
+
+/**
+ * A CSS gradient of equal, hard-edged bands, one per colour.
+ */
+export function bands(colours: string[], direction: string): string {
+  const step = 100 / colours.length
+  const stops = colours.flatMap((colour, index) => [`${colour} ${index * step}%`, `${colour} ${(index + 1) * step}%`])
+  return `linear-gradient(${direction}, ${stops.join(', ')})`
 }
 
 function primaryVariables(hex: string): Record<string, string> {

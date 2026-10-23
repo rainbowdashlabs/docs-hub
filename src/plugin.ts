@@ -56,7 +56,6 @@ export default function hubPlugin(context: LoadContext, site: Site, spaces: Spac
   return {
     name: 'docs-hub',
     getThemePath: () => THEME_DIR,
-    getTypeScriptThemePath: () => THEME_DIR,
     getClientModules: () => [`${THEME_DIR}/hub.css`],
     async contentLoaded({actions}) {
       actions.setGlobalData(data)

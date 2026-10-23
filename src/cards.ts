@@ -3,7 +3,7 @@ import {mkdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {createRequire} from 'node:module'
 import {dirname, extname, join} from 'node:path'
 import satori from 'satori'
-import {darkOf} from './colours.ts'
+import {bands, darkOf} from './colours.ts'
 import type {Colour, Site} from './types.ts'
 
 export const CARDS_DIR = 'og'
@@ -67,7 +67,7 @@ function layout(site: Site, card: Card, logo: string | undefined): Node {
   if (logo !== undefined) footer.push({type: 'img', props: {src: logo, width: 72, height: 72}})
   footer.push(div({fontSize: 30, color: '#b0b3b8'}, `${site.title} · ${new URL(site.url).host}`))
   return div({width: WIDTH, height: HEIGHT, background: '#1b1b1d', fontFamily: 'Noto Sans'}, [
-    div({width: 24, height: HEIGHT, background: accent}, []),
+    div({width: 24, height: HEIGHT, ...(site.stripe ? {backgroundImage: bands(site.stripe, 'to bottom')} : {background: accent})}, []),
     div({flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between', padding: '64px 72px'}, [
       div({flexDirection: 'column', gap: 24}, heading),
       div({alignItems: 'center', gap: 24}, footer),

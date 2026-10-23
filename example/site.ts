@@ -1,4 +1,4 @@
-import type {Site} from 'docs-hub'
+import type {Site} from '../src/types.ts'
 
 export default {
   title: 'Example Hub',
@@ -6,6 +6,8 @@ export default {
   url: 'https://example.invalid',
   favicon: 'img/favicon.svg',
   primary: {light: '#2e7d32', dark: '#66bb6a'},
+  stripe: ['#1b5e20', '#66bb6a', '#c8e6c9'],
+  customCss: ['./custom.css'],
   groups: [
     {id: 'projects', label: 'Projects'},
     {id: 'tools', label: 'Tools'},

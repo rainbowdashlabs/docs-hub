@@ -1,4 +1,4 @@
-import {createHubConfig} from 'docs-hub'
+import {createHubConfig} from '../dist/index.js'
 import site from './site'
 import spaces from './spaces'
 

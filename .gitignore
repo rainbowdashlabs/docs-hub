@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+.docusaurus/
+.spaces/
+.javadoc/
+.cache/
+.direnv/
+.idea/
+.concept/

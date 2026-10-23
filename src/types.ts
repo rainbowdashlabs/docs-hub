@@ -34,6 +34,9 @@ export interface Group {
  * absolute URL. The build fails when a route target does not exist.
  *
  * `mavenRepositories` are searched in order for the Javadoc of the spaces; Maven Central when unset.
+ *
+ * `stripe` is a list of colours shown as equal bands: a thin line under the navbar and the edge of the
+ * preview cards. `customCss` lists extra stylesheets of the hub, relative to the site directory.
  */
 export interface Site {
   title: string
@@ -49,6 +52,8 @@ export interface Site {
   copyright?: string
   redirects?: Record<string, string>
   mavenRepositories?: string[]
+  stripe?: string[]
+  customCss?: string[]
 }
 
 /**
