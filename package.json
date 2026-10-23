@@ -1,0 +1,28 @@
+{
+  "name": "docs-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Docusaurus hub that gathers the docs folders of many repositories into one site with a separate space per project.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "docs-hub": "./src/cli.ts"
+  },
+  "dependencies": {
+    "@docusaurus/faster": "3.10.2",
+    "@docusaurus/plugin-content-docs": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@docusaurus/theme-common": "3.10.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.3",
+    "clsx": "^2.1.1",
+    "jiti": "^1.21.7",
+    "prism-react-renderer": "^2.4.1"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "3.10.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
