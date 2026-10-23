@@ -40,7 +40,7 @@ export function createHubConfig(site: Site, spaces: Space[]): Config {
       docs: false,
       blog: false,
       pages: false,
-      theme: {customCss: site.customCss ?? []},
+      ...(site.customCss === undefined ? {} : {theme: {customCss: site.customCss}}),
     }]],
     themes: built.length === 0 ? [] : [searchTheme(built)],
     plugins: [
